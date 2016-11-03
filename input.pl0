@@ -1,5 +1,6 @@
 var x, y;
 begin
-  x := 3;       /* This is := a % comment. */ x := 4;
-  x := y + 56;
+	if x = a then
+		y := 5;
+ x := y + 56;
 end.

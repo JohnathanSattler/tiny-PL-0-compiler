@@ -11,6 +11,7 @@
 int program(tok * allTokens) {
 
 	tokenList = allTokens;
+	cx = 0;
 
 	printf("\n");
 
@@ -115,8 +116,8 @@ void condition() {
 
 void relOp() {
 
-	if (token != eqlsym || token != neqsym || token != lessym ||
-		token != leqsym || token != gtrsym || token != geqsym) {
+	if (token != eqlsym && token != neqsym && token != lessym &&
+		token != leqsym && token != gtrsym && token != geqsym) {
 
 		error(-1);
 		return; 
@@ -173,6 +174,8 @@ void advance() {
 
 	token = tokenList -> id;
 	tokenList = tokenList -> next;
+
+	// printf("tok: %d\n", token);
 }
 
 void error(int num) {
@@ -182,16 +185,20 @@ void error(int num) {
 	printf("Error(%d): ", num);
 
 	switch (num) {
+		case -3:
+			printf("code too long");
+			break;
+
 		case -2:
-			printf("The preceding factor cannot begin with this symbol.");
+			printf("the preceding factor cannot begin with this symbol.");
 			break;
 
 		case -1:
-			printf("Relational operator expected.");
+			printf("relational operator expected.");
 			break;
 
 		case 0:
-			printf("Code ended abruptly.");
+			printf("code ended abruptly.");
 			break;
 
 		case 1:
@@ -249,23 +256,29 @@ void error(int num) {
 			break;
 
 		case 19: // periodsym
-			printf("Period expected\n");
+			printf("period expected");
 			break;
 
-		case 20:
+		case 20: // becomesym
+			if (token == eqlsym) {
+				printf("use = instead of :=");
+			} else {
+				printf("expected :=");
+			}
 			break;
 
 		case 21:
 			break;
 
 		case 22: // endsym
-			printf("End expected\n");
+			printf("end expected");
 			break;
 
 		case 23:
 			break;
 
 		case 24:
+			printf("then expected");
 			break;
 
 		case 25:
@@ -296,7 +309,7 @@ void error(int num) {
 			break;
 
 		default:
-			printf("error: %d", num);
+			printf("unkown error");
 			break;
 	}
 
@@ -307,4 +320,16 @@ void eat(int id) {
 
 	if (token != id) error(id);
 	advance();
+}
+
+void emit(int op, int l, int m) {
+
+	if (cx > MAX_CODE_LENGTH) {
+		error(-3);
+	} else {
+		code[cx].op = sym.val;
+		code[cx].l = sym.level;
+		code[cx].m = sym.addr;
+		cx++;
+	}
 }
