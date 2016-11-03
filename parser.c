@@ -167,43 +167,144 @@ void factor() {
 void advance() {
 
 	if (tokenList == NULL) {
+		token = 0;
 		return;
 	}
 
 	token = tokenList -> id;
 	tokenList = tokenList -> next;
-
-	//printf("tok: %d\n", token);
 }
 
 void error(int num) {
 
 	numError++;
 
-	printf("Error: ");
+	printf("Error(%d): ", num);
 
 	switch (num) {
 		case -2:
-			printf("The preceding factor cannot begin with this symbol.\n");
+			printf("The preceding factor cannot begin with this symbol.");
 			break;
 
 		case -1:
-			printf("Relational operator expected.\n");
+			printf("Relational operator expected.");
 			break;
 
 		case 0:
-			printf("Code ended abruptly\n");
+			printf("Code ended abruptly.");
+			break;
+
+		case 1:
+			break;
+
+		case 2:
+			break;
+
+		case 3:
+			break;
+
+		case 4:
+			break;
+
+		case 5:
+			break;
+
+		case 6:
+			break;
+
+		case 7:
+			break;
+
+		case 8:
+			break;
+
+		case 9:
+			break;
+
+		case 10:
+			break;
+
+		case 11:
+			break;
+
+		case 12:
+			break;
+
+		case 13:
+			break;
+
+		case 14:
+			break;
+
+		case 15:
+			break;
+
+		case 16:
+			break;
+
+		case 17:
+			break;
+
+		case 18:
+			break;
+
+		case 19: // periodsym
+			printf("Period expected\n");
+			break;
+
+		case 20:
+			break;
+
+		case 21:
+			break;
+
+		case 22: // endsym
+			printf("End expected\n");
+			break;
+
+		case 23:
+			break;
+
+		case 24:
+			break;
+
+		case 25:
+			break;
+
+		case 26:
+			break;
+
+		case 27:
+			break;
+
+		case 28:
+			break;
+
+		case 29:
+			break;
+
+		case 30:
+			break;
+
+		case 31:
+			break;
+
+		case 32:
+			break;
+
+		case 33:
 			break;
 
 		default:
-			printf("error: %d\n", num);
+			printf("error: %d", num);
 			break;
 	}
+
+	printf("\n");
 }
 
 void eat(int id) {
 
 	if (token != id) error(id);
-	else
 	advance();
 }

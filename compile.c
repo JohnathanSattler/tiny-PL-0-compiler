@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
 
 	if (printToksErrors(toks) == 0) {
 		if (program(toks) == 0) {
-			printf("Program compiled successfully!\n");
+			printf("No errors, program syntactically correct\n");
 		}
 	}
 

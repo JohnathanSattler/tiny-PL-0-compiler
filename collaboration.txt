@@ -7,20 +7,14 @@
 
 Lester Young
 
-Wrote the printToks funtion in the print.c file. 
 
 Timothy Konzil
 
-Wrote the getNextTok and its supporting function. 
 
 Remington Howell
 
-Worked on and contributed to the parsing functions. 
 
 Johnathan Sattler
 
-Wrote the input functions and the print code functions in the print.c file . 
 
 John Herold
-
-Worked on the Error handling for the program.
