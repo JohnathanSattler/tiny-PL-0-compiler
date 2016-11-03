@@ -1,6 +1,6 @@
-var x, y;
+var x, y
 begin
 	if x = a then
-		y := 5;
+		y := 5 + (5 + 5;
  x := y + 56;
 end.

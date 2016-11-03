@@ -246,13 +246,15 @@ void error(int num) {
 		case 15:
 			break;
 
-		case 16:
+		case 16: // rparentsym
+			printf("expected right parenthesis");
 			break;
 
 		case 17:
 			break;
 
-		case 18:
+		case 18: // semicolonsym
+			printf("semicolon expected");
 			break;
 
 		case 19: // periodsym
