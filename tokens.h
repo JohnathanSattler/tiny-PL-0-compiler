@@ -8,6 +8,9 @@
 #ifndef _tokensh_
 #define _tokensh_
 
+#define MAX_SYMBOL_TABLE_SIZE 100
+#define MAX_CODE_LENGTH 500
+
 typedef enum tokens {
   nulsym = 1, identsym, numbersym, plussym, minussym,
   multsym, slashsym, oddsym, eqlsym, neqsym, lessym, leqsym,
@@ -55,5 +58,13 @@ typedef struct instruction
   int l;
   int m;
 } instruction;
+
+typedef struct symbol {
+  int kind;      // const = 1, var = 2, proc = 3
+  char name[12]; // name up to 11 chars
+  int val;     // number (ASCII value)
+  int level;     // L level
+  int addr;      // M address
+} symbol;
 
 #endif

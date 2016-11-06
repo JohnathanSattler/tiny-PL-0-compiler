@@ -8,12 +8,20 @@
 // Included libraries
 #include "parser.h"
 
+symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
+instruction code[MAX_CODE_LENGTH];
+
+tok * tokenList;
+
+int token;
+int numError;
+int cx = 0;
+
 int program(tok * allTokens) {
 
 	int i;
 
 	tokenList = allTokens;
-	cx = 0;
 
 	printf("\n");
 
@@ -371,9 +379,20 @@ void emit(int op, int l, int m) {
 	if (cx > MAX_CODE_LENGTH) {
 		error(-3);
 	} else {
-		code[cx].op = op;//sym.val;
-		code[cx].l = l;//sym.level;
-		code[cx].m = m;//sym.addr;
+		code[cx].op = op;
+		code[cx].l = l;
+		code[cx].m = m;
 		cx++;
 	}
+}
+
+int symbolExists(char * name) {
+
+	int i;
+
+	for (i = 0; i < MAX_SYMBOL_TABLE_SIZE; i++)
+		if (strcmp(symbolTable[i].name, name) == 0)
+			return i;
+
+	return -1;
 }
