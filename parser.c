@@ -10,6 +10,8 @@
 
 int program(tok * allTokens) {
 
+	int i;
+
 	tokenList = allTokens;
 	cx = 0;
 
@@ -22,6 +24,12 @@ int program(tok * allTokens) {
 	block();
 
 	eat(periodsym);
+
+	printf("Code:\n");
+	for (i = 0; i < cx; i++) {
+		printf("%d %d %d\n", code[i].op, code[i].l, code[i].m);
+	}
+	printf("\n");
 
 	return numError;
 }
@@ -69,6 +77,9 @@ void varDeclaration() {
 
 void statement() {
 
+	int cx1;
+	int cx2;
+
 	if (token == identsym) {
 		advance();
 		eat(becomessym);
@@ -87,12 +98,22 @@ void statement() {
 		advance();
 		condition();
 		eat(thensym);
+
+		cx1 = cx;
+		emit(JPC, 0, 0);
 		statement();
+		code[cx1].m = cx;
 	} else if (token == whilesym) {
+		cx1 = cx;
 		advance();
 		condition();
+		cx2 = cx;
+		emit(JPC, 0, 0);
 		eat(dosym);
+
+		emit(JPC, 0, cx1);
 		statement();
+		code[cx2].m = cx;
 	} else if (token == readsym) {
 		advance();
 		eat(identsym);
@@ -128,25 +149,46 @@ void relOp() {
 
 void expression() {
 
+	int addop;
+
 	if (token == plussym || token == minussym) {
-		advance();
-	}
-
-	term();
-
-	while (token == plussym || token == minussym) {
+		addop = token;
 		advance();
 		term();
+		if (addop == minussym) {
+			emit(OPR, 0, OPR_NEG); // negate
+		}
+	} else {
+		term();
+	}
+
+	while (token == plussym || token == minussym) {
+		addop = token;
+		advance();
+		term();
+		if (addop == plussym) {
+			emit(OPR, 0, OPR_ADD); // addition
+		} else {
+			emit(OPR, 0, OPR_SUB); // subtraction
+		}
 	}
 }
 
 void term() {
 
+	int mulop;
+
 	factor();
 
 	while (token == multsym || token == slashsym) {
+		mulop = token;
 		advance();
 		factor();
+		if (mulop == multsym) {
+			emit(OPR, 0, OPR_MUL); // multiplication
+		} else {
+			emit(OPR, 0, OPR_DIV); // division
+		}
 	}
 }
 
@@ -329,9 +371,9 @@ void emit(int op, int l, int m) {
 	if (cx > MAX_CODE_LENGTH) {
 		error(-3);
 	} else {
-		code[cx].op = sym.val;
-		code[cx].l = sym.level;
-		code[cx].m = sym.addr;
+		code[cx].op = op;//sym.val;
+		code[cx].l = l;//sym.level;
+		code[cx].m = m;//sym.addr;
 		cx++;
 	}
 }

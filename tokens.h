@@ -17,6 +17,21 @@ typedef enum tokens {
   readsym , elsesym
 } token_type;
 
+typedef enum opCodes {
+  LIT = 1, OPR, LOD, STO,
+  CAL, INC, JMP, JPC, SIO
+} ops;
+
+typedef enum OPR {
+  OPR_RET = 0, OPR_NEG, OPR_ADD, OPR_SUB,
+  OPR_MUL, OPR_DIV, OPR_ODD, OPR_MOD, OPR_EQL,
+  OPR_NEQ, OPR_LSS, OPR_LEQ, OPR_GTR, OPR_GEQ
+} opr;
+
+typedef enum SIO {
+  SIO_OUT = 0, SIO_INP, SIO_HLT
+} sio;
+
 typedef struct sourceCode {
   char c;
   struct sourceCode * next;
