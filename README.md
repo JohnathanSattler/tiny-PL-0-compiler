@@ -10,10 +10,10 @@ run vm: `./vm (input)`
 
 arguments:
 
-*`--source` Display input PL/0 code
-*`--clean` Display input PL/0 Code without comments
-*`--tokens` Display tokens found from lexer
-*`--pm0` Display PM/0 code generated from parser
+* `--source` Display input PL/0 code
+* `--clean` Display input PL/0 Code without comments
+* `--tokens` Display tokens found from lexer
+* `--pm0` Display PM/0 code generated from parser
 
 Example: `./compile input.pl0 output.pm0`
 
