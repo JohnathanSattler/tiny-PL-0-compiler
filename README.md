@@ -14,7 +14,7 @@ run compiler: `./compile (arguments) (input) (output)`
 
 run vm: `./vm (input)`
 
-arguments:
+Arguments:
 
 * `--source` Display input PL/0 code
 * `--clean` Display input PL/0 Code without comments
@@ -24,6 +24,8 @@ arguments:
 Examples:
 ---------
 
-Example: `./compile input.pl0 output.pm0`
+Compiler: `./compile input.pl0 output.pm0`
 
-Example: `./vm output.pm0`
+Compiler: `./compile --source --clean --tokens --pm0 input.pl0 output.pm0`
+
+Virtual Machine: `./vm output.pm0`
