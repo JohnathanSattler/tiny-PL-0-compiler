@@ -299,48 +299,12 @@ void error(int num) {
 			printf("= must be followed by a number.");
 			break;
 
-		case 4:
-			break;
-
-		case 5:
-			break;
-
-		case 6:
-			break;
-
-		case 7:
-			break;
-
-		case 8:
-			break;
-
 		case 9: // eqlsym
 			printf("Identifier must be followed by =.");
 			break;
 
-		case 10:
-			break;
-
-		case 11:
-			break;
-
-		case 12:
-			break;
-
-		case 13:
-			break;
-
-		case 14:
-			break;
-
-		case 15:
-			break;
-
 		case 16: // rparentsym
 			printf("expected right parenthesis");
-			break;
-
-		case 17:
 			break;
 
 		case 18: // semicolonsym
@@ -359,45 +323,12 @@ void error(int num) {
 			}
 			break;
 
-		case 21:
-			break;
-
 		case 22: // endsym
 			printf("end expected");
 			break;
 
-		case 23:
-			break;
-
 		case 24: // thensym
 			printf("then expected");
-			break;
-
-		case 25:
-			break;
-
-		case 26:
-			break;
-
-		case 27:
-			break;
-
-		case 28:
-			break;
-
-		case 29:
-			break;
-
-		case 30:
-			break;
-
-		case 31:
-			break;
-
-		case 32:
-			break;
-
-		case 33:
 			break;
 
 		default:

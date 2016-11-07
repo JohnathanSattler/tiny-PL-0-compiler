@@ -8,8 +8,6 @@
 // Included libraries
 #include "compile.h"
 
-instruction code[MAX_CODE_LENGTH];
-
 // main function
 int main(int argc, const char * argv[]) {
 
