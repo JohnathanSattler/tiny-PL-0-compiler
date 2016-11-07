@@ -1,10 +1,7 @@
-const a = 2, b = 54, c = 423;
-var x, w;
+var a, b;
 begin
-	x := 4;
-	write w;
-	read w;
-	if w > x then
-		w := w * 2 * (a + (c / b));
-	read w;
-end.
+  a := 88;
+  b := 99;
+  write a;
+  write b
+end .

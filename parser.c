@@ -20,6 +20,7 @@ int numSym = 0;
 char * identName;
 int identVal;
 int relOpCode;
+int numVar = 0;
 
 int program(tok * allTokens, const char * outputFileName) {
 
@@ -39,12 +40,6 @@ int program(tok * allTokens, const char * outputFileName) {
 
 	emit(SIO, 0, SIO_HLT);
 
-	printf("Code:\n");
-	for (i = 0; i < cx; i++) {
-		printf("%d %d %d\n", code[i].op, code[i].l, code[i].m);
-	}
-	printf("\n");
-
 	writeFile(outputFileName, code, cx);
 
 	return numError;
@@ -54,6 +49,9 @@ void block() {
 
 	constDeclaration();
 	varDeclaration();
+
+	emit(INC, 0, 4 + numVar);
+
 	statement();
 }
 
@@ -85,8 +83,8 @@ void constDeclaration() {
 			eat(numbersym);
 
 			if (!omit) {
-				addSymbol(1, name, val, 0, cx);
-				emit(LIT, 0, val);
+				addSymbol(1, name, val, 0, val);
+				// emit(LIT, 0, val);
 			}
 		} while (token == commasym);
 
@@ -112,8 +110,9 @@ void varDeclaration() {
 			eat(identsym);
 
 			if (!omit) {
-				addSymbol(2, name, 0, 0, cx);
-				emit(LIT, 0, 0);
+				addSymbol(2, name, 0, 0, 4 + numVar);
+				//emit(LIT, 0, 0);
+				numVar++;
 			}
 		} while (token == commasym);
 
@@ -140,7 +139,11 @@ void statement() {
 		eat(becomessym);
 		expression();
 
-		emit(STO, 0, m);
+		if (symbolTable[i].kind == 2) {
+			emit(STO, 0, m);
+		} else {
+			error(-6);
+		}
 	} else if (token == beginsym) {
 		advance();
 		statement();
@@ -181,8 +184,8 @@ void statement() {
 
 		eat(identsym);
 
-		emit(LOD, 0, m);
-		emit(SIO, 0, SIO_OUT);
+		emit(SIO, 0, SIO_INP);
+		emit(STO, 0, m);
 	} else if (token == writesym) {
 		advance();
 
@@ -193,8 +196,12 @@ void statement() {
 
 		eat(identsym);
 
-		emit(SIO, 0, SIO_INP);
-		emit(STO, 0, m);
+		if (symbolTable[i].kind == 1) {
+			emit(LIT, 0, m);
+		} else {
+			emit(LOD, 0, m);
+		}
+		emit(SIO, 0, SIO_OUT);
 	}
 }
 
@@ -290,7 +297,11 @@ void factor() {
 
 		advance();
 
-		emit(LOD, 0, m);
+		if (symbolTable[i].kind == 1) {
+			emit(LIT, 0, m);
+		} else {
+			emit(LOD, 0, m);
+		}
 	} else if (token == numbersym) {
 		m = identVal;
 
