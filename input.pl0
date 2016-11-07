@@ -1,7 +1,10 @@
-const a = 12, b = 54, c = 234;
-var x, y;
+const a = 2, b = 54, c = 423;
+var x, w;
 begin
-	if x = 0 then
-		y := 5 * (5 + 5);
- x := y + 56;
+	x := 4;
+	write w;
+	read w;
+	if w > x then
+		w := w * 2 * (a + (c / b));
+	read w;
 end.

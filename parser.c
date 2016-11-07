@@ -17,6 +17,9 @@ int token;
 int numError;
 int cx = 0;
 int numSym = 0;
+char * identName;
+int identVal;
+int relOpCode;
 
 int program(tok * allTokens, const char * outputFileName) {
 
@@ -33,6 +36,8 @@ int program(tok * allTokens, const char * outputFileName) {
 	block();
 
 	eat(periodsym);
+
+	emit(SIO, 0, SIO_HLT);
 
 	printf("Code:\n");
 	for (i = 0; i < cx; i++) {
@@ -121,10 +126,21 @@ void statement() {
 	int cx1;
 	int cx2;
 
+	char * name;
+	int i;
+	int m;
+
 	if (token == identsym) {
+		name = identName;
+		i = symbolExists(name);
+		if (i < 0) error(-5);
+		else m = symbolTable[i].addr;
+
 		advance();
 		eat(becomessym);
 		expression();
+
+		emit(STO, 0, m);
 	} else if (token == beginsym) {
 		advance();
 		statement();
@@ -157,10 +173,28 @@ void statement() {
 		code[cx2].m = cx;
 	} else if (token == readsym) {
 		advance();
+
+		name = identName;
+		i = symbolExists(name);
+		if (i < 0) error(-5);
+		else m = symbolTable[i].addr;
+
 		eat(identsym);
+
+		emit(LOD, 0, m);
+		emit(SIO, 0, SIO_OUT);
 	} else if (token == writesym) {
 		advance();
+
+		name = identName;
+		i = symbolExists(name);
+		if (i < 0) error(-5);
+		else m = symbolTable[i].addr;
+
 		eat(identsym);
+
+		emit(SIO, 0, SIO_INP);
+		emit(STO, 0, m);
 	}
 }
 
@@ -173,17 +207,27 @@ void condition() {
 		expression();
 		relOp();
 		expression();
+
+		emit(OPR, 0, relOpCode);
 	}
 }
 
 void relOp() {
 
-	if (token != eqlsym && token != neqsym && token != lessym &&
-		token != leqsym && token != gtrsym && token != geqsym) {
-
+	if (token == eqlsym)
+		relOpCode = OPR_EQL;
+	else if (token == neqsym)
+		relOpCode = OPR_NEQ;
+	else if (token == lessym)
+		relOpCode = OPR_LSS;
+	else if (token == leqsym)
+		relOpCode = OPR_LEQ;
+	else if (token == gtrsym)
+		relOpCode = OPR_GTR;
+	else if (token == geqsym)
+		relOpCode = OPR_GEQ;
+	else
 		error(-1);
-		return; 
-	}
 
 	advance();
 }
@@ -235,10 +279,24 @@ void term() {
 
 void factor() {
 
+	char * name;
+	int i, m;
+
 	if (token == identsym) {
+		name = identName;
+		i = symbolExists(name);
+		if (i < 0) error(-5);
+		else m = symbolTable[i].addr;
+
 		advance();
+
+		emit(LOD, 0, m);
 	} else if (token == numbersym) {
+		m = identVal;
+
 		advance();
+
+		emit(LIT, 0, m);
 	} else if (token == lparentsym) {
 		advance();
 		expression();
@@ -256,6 +314,10 @@ void advance() {
 	}
 
 	token = tokenList -> id;
+
+	if (token == identsym) identName = tokenList -> str;
+	else if (token == numbersym) identVal = tokenList -> number;
+
 	tokenList = tokenList -> next;
 
 	// printf("tok: %d\n", token);
@@ -268,6 +330,10 @@ void error(int num) {
 	printf("Error(%d): ", num);
 
 	switch (num) {
+		case -5:
+			printf("Undeclared identifier");
+			break;
+
 		case -4:
 			printf("too many symbols");
 			break;
@@ -286,9 +352,6 @@ void error(int num) {
 
 		case 0:
 			printf("code ended abruptly.");
-			break;
-
-		case 1:
 			break;
 
 		case 2: // identsym
