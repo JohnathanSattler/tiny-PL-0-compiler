@@ -9,9 +9,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "tokens.h"
+#include "input.h"
 
 // Function prototypes
-int program(tok * allTokens);
+int program(tok * allTokens, const char * outputFileName);
 void block();
 void constDeclaration();
 void varDeclaration();

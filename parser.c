@@ -18,7 +18,7 @@ int numError;
 int cx = 0;
 int numSym = 0;
 
-int program(tok * allTokens) {
+int program(tok * allTokens, const char * outputFileName) {
 
 	int i;
 
@@ -40,6 +40,8 @@ int program(tok * allTokens) {
 	}
 	printf("\n");
 
+	writeFile(outputFileName, code, cx);
+
 	return numError;
 }
 
@@ -54,18 +56,33 @@ void constDeclaration() {
 
 	char * name;
 	int val;
+	tok * temp;
+	int omit = 0;
 
 	if (token == constsym) {
 		do {
-			name = tokenList -> str;
+			temp = tokenList;
+
 			advance();
+
+			if (token == identsym) name = temp -> str;
+			else omit = 1;
+
 			eat(identsym);
-			val = tokenList -> number;
+
+			temp = tokenList;
+
 			eat(eqlsym);
+
+			if (token == numbersym) val = temp -> number;
+			else omit = 1;
+
 			eat(numbersym);
 
-			addSymbol(1, name, val, 0, cx);
-			emit(LIT, 0, val);
+			if (!omit) {
+				addSymbol(1, name, val, 0, cx);
+				emit(LIT, 0, val);
+			}
 		} while (token == commasym);
 
 		eat(semicolonsym);
@@ -75,15 +92,24 @@ void constDeclaration() {
 void varDeclaration() {
 
 	char * name;
+	tok * temp;
+	int omit = 0;
 
 	if (token == varsym) {
 		do {
-			name = tokenList -> str;
+			temp = tokenList;
+
 			advance();
+
+			if (token == identsym) name = temp -> str;
+			else omit = 1;
+
 			eat(identsym);
 
-			addSymbol(2, name, 0, 0, cx);
-			emit(LIT, 0, 0);
+			if (!omit) {
+				addSymbol(2, name, 0, 0, cx);
+				emit(LIT, 0, 0);
+			}
 		} while (token == commasym);
 
 		eat(semicolonsym);
@@ -265,10 +291,12 @@ void error(int num) {
 		case 1:
 			break;
 
-		case 2:
+		case 2: // identsym
+			printf("const, var, procedure must be followed by identifier.");
 			break;
 
-		case 3:
+		case 3: // numbersym
+			printf("= must be followed by a number.");
 			break;
 
 		case 4:
@@ -286,7 +314,8 @@ void error(int num) {
 		case 8:
 			break;
 
-		case 9:
+		case 9: // eqlsym
+			printf("Identifier must be followed by =.");
 			break;
 
 		case 10:
@@ -340,7 +369,7 @@ void error(int num) {
 		case 23:
 			break;
 
-		case 24:
+		case 24: // thensym
 			printf("then expected");
 			break;
 

@@ -20,7 +20,7 @@ input.o: input.c input.h tokens.h
 printing.o: printing.c printing.h tokens.h
 	gcc -c printing.c
 
-parser.o: parser.c parser.h tokens.h
+parser.o: parser.c parser.h tokens.h input.h
 	gcc -c parser.c
 
 clean:

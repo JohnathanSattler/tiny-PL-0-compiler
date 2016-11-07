@@ -10,5 +10,6 @@
 #include <stdlib.h>
 #include "tokens.h"
 
-sourceCode * handleInput(int argc, const char * argv[], sourceCode * code);
+sourceCode * handleInput(int argc, const char * argv[], sourceCode * code, const char * outputFileName[]);
 sourceCode * readFile(const char * fileName, sourceCode * code);
+void writeFile(const char * fileName, instruction * code, int size);

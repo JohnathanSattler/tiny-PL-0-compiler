@@ -9,12 +9,14 @@
 #include "input.h"
 
 // handle the arguments passed into the program
-sourceCode * handleInput(int argc, const char * argv[], sourceCode * code) {
+sourceCode * handleInput(int argc, const char * argv[], sourceCode * code, const char * outputFileName[]) {
 
 	const char * inputFile, * outputFile;
 
 	inputFile = argv[1];
 	outputFile = argv[2];
+
+	*outputFileName = outputFile;
 
 	code = readFile(inputFile, code);
 
@@ -55,4 +57,20 @@ sourceCode * readFile(const char * fileName, sourceCode * code) {
 	fclose(ifp);
 
 	return code;
+}
+
+void writeFile(const char * fileName, instruction * code, int size) {
+
+	FILE * ofp;
+	int i;
+
+	ofp = fopen(fileName, "w");
+
+	for (i = 0; i < size; i++) {
+		fprintf(ofp, "%d %d %d\n", code[i].op, code[i].l, code[i].m);
+	}
+
+	fclose(ofp);
+
+	return;
 }
