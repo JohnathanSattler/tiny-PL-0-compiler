@@ -134,3 +134,16 @@ int printToksErrors(tok * toks) {
 	return numError; 	
 	
 }
+
+void printAssembly(instruction code[], int size) {
+
+	int i;
+
+	printf("PM/0 Code:\n");
+	printf("----------\n");
+
+	for (i = 0; i < size; i++)
+		printf("%d %d %d\n", code[i].op, code[i].l, code[i].m);
+
+	return;
+}

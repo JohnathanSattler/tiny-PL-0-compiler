@@ -14,7 +14,7 @@ instruction code[MAX_CODE_LENGTH];
 tok * tokenList;
 
 int token;
-int numError;
+int numError = 0;
 int cx = 0;
 int numSym = 0;
 char * identName;
@@ -22,7 +22,7 @@ int identVal;
 int relOpCode;
 int numVar = 0;
 
-int program(tok * allTokens, const char * outputFileName) {
+int program(tok * allTokens, const char * outputFileName, int pm0) {
 
 	int i;
 
@@ -30,17 +30,20 @@ int program(tok * allTokens, const char * outputFileName) {
 
 	printf("\n");
 
-	numError = 0;
-
 	advance();
-
 	block();
-
 	eat(periodsym);
 
 	emit(SIO, 0, SIO_HLT);
 
-	writeFile(outputFileName, code, cx);
+	if (numError == 0) {
+		if (pm0) {
+			printAssembly(code, cx);
+			printf("\n");
+		}
+
+		writeFile(outputFileName, code, cx);
+	}
 
 	return numError;
 }
@@ -68,8 +71,10 @@ void constDeclaration() {
 
 			advance();
 
-			if (token == identsym) name = temp -> str;
-			else omit = 1;
+			if (token == identsym)
+				name = temp -> str;
+			else
+				omit = 1;
 
 			eat(identsym);
 
@@ -77,15 +82,15 @@ void constDeclaration() {
 
 			eat(eqlsym);
 
-			if (token == numbersym) val = temp -> number;
-			else omit = 1;
+			if (token == numbersym)
+				val = temp -> number;
+			else
+				omit = 1;
 
 			eat(numbersym);
 
-			if (!omit) {
+			if (!omit)
 				addSymbol(1, name, val, 0, val);
-				// emit(LIT, 0, val);
-			}
 		} while (token == commasym);
 
 		eat(semicolonsym);
@@ -104,14 +109,15 @@ void varDeclaration() {
 
 			advance();
 
-			if (token == identsym) name = temp -> str;
-			else omit = 1;
+			if (token == identsym)
+				name = temp -> str;
+			else
+				omit = 1;
 
 			eat(identsym);
 
 			if (!omit) {
 				addSymbol(2, name, 0, 0, 4 + numVar);
-				//emit(LIT, 0, 0);
 				numVar++;
 			}
 		} while (token == commasym);
@@ -132,18 +138,20 @@ void statement() {
 	if (token == identsym) {
 		name = identName;
 		i = symbolExists(name);
-		if (i < 0) error(-5);
-		else m = symbolTable[i].addr;
+
+		if (i < 0)
+			error(-5);
+		else
+			m = symbolTable[i].addr;
 
 		advance();
 		eat(becomessym);
 		expression();
 
-		if (symbolTable[i].kind == 2) {
+		if (symbolTable[i].kind == 2)
 			emit(STO, 0, m);
-		} else {
+		else
 			error(-6);
-		}
 	} else if (token == beginsym) {
 		advance();
 		statement();
@@ -171,16 +179,19 @@ void statement() {
 		emit(JPC, 0, 0);
 		eat(dosym);
 
-		emit(JPC, 0, cx1);
 		statement();
+		emit(JMP, 0, cx1);
 		code[cx2].m = cx;
 	} else if (token == readsym) {
 		advance();
 
 		name = identName;
 		i = symbolExists(name);
-		if (i < 0) error(-5);
-		else m = symbolTable[i].addr;
+
+		if (i < 0)
+			error(-5);
+		else
+			m = symbolTable[i].addr;
 
 		eat(identsym);
 
@@ -191,16 +202,19 @@ void statement() {
 
 		name = identName;
 		i = symbolExists(name);
-		if (i < 0) error(-5);
-		else m = symbolTable[i].addr;
+
+		if (i < 0)
+			error(-5);
+		else
+			m = symbolTable[i].addr;
 
 		eat(identsym);
 
-		if (symbolTable[i].kind == 1) {
+		if (symbolTable[i].kind == 1)
 			emit(LIT, 0, m);
-		} else {
+		else
 			emit(LOD, 0, m);
-		}
+
 		emit(SIO, 0, SIO_OUT);
 	}
 }
@@ -245,24 +259,26 @@ void expression() {
 
 	if (token == plussym || token == minussym) {
 		addop = token;
+
 		advance();
 		term();
-		if (addop == minussym) {
+
+		if (addop == minussym)
 			emit(OPR, 0, OPR_NEG); // negate
-		}
 	} else {
 		term();
 	}
 
 	while (token == plussym || token == minussym) {
 		addop = token;
+
 		advance();
 		term();
-		if (addop == plussym) {
+
+		if (addop == plussym)
 			emit(OPR, 0, OPR_ADD); // addition
-		} else {
+		else
 			emit(OPR, 0, OPR_SUB); // subtraction
-		}
 	}
 }
 
@@ -274,13 +290,14 @@ void term() {
 
 	while (token == multsym || token == slashsym) {
 		mulop = token;
+
 		advance();
 		factor();
-		if (mulop == multsym) {
+
+		if (mulop == multsym)
 			emit(OPR, 0, OPR_MUL); // multiplication
-		} else {
+		else
 			emit(OPR, 0, OPR_DIV); // division
-		}
 	}
 }
 
@@ -292,16 +309,18 @@ void factor() {
 	if (token == identsym) {
 		name = identName;
 		i = symbolExists(name);
-		if (i < 0) error(-5);
-		else m = symbolTable[i].addr;
+
+		if (i < 0)
+			error(-5);
+		else
+			m = symbolTable[i].addr;
 
 		advance();
 
-		if (symbolTable[i].kind == 1) {
+		if (symbolTable[i].kind == 1)
 			emit(LIT, 0, m);
-		} else {
+		else
 			emit(LOD, 0, m);
-		}
 	} else if (token == numbersym) {
 		m = identVal;
 
@@ -326,12 +345,12 @@ void advance() {
 
 	token = tokenList -> id;
 
-	if (token == identsym) identName = tokenList -> str;
-	else if (token == numbersym) identVal = tokenList -> number;
+	if (token == identsym)
+		identName = tokenList -> str;
+	else if (token == numbersym)
+		identVal = tokenList -> number;
 
 	tokenList = tokenList -> next;
-
-	// printf("tok: %d\n", token);
 }
 
 void error(int num) {
@@ -341,6 +360,10 @@ void error(int num) {
 	printf("Error(%d): ", num);
 
 	switch (num) {
+		case -6:
+			printf("Assignment to constant or procedure is not allowed.");
+			break;
+
 		case -5:
 			printf("Undeclared identifier");
 			break;
@@ -405,17 +428,25 @@ void error(int num) {
 			printf("then expected");
 			break;
 
+		case 26: // dosym
+			printf("do expected.");
+			break;
+
 		default:
 			printf("unkown error");
 			break;
 	}
 
 	printf("\n");
+
+	exit(1);
 }
 
 void eat(int id) {
 
-	if (token != id) error(id);
+	if (token != id)
+		error(id);
+
 	advance();
 }
 

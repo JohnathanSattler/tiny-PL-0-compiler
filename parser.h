@@ -10,9 +10,10 @@
 #include <string.h>
 #include "tokens.h"
 #include "input.h"
+#include "printing.h"
 
 // Function prototypes
-int program(tok * allTokens, const char * outputFileName);
+int program(tok * allTokens, const char * outputFileName, int pm0);
 void block();
 void constDeclaration();
 void varDeclaration();

@@ -13,3 +13,4 @@ void printSourceCode(sourceCode * code);
 void printCleanCode(sourceCode * code);
 void printToks(tok * toks);
 int printToksErrors(tok * toks);
+void printAssembly(instruction code[], int size);

@@ -9,12 +9,34 @@
 #include "input.h"
 
 // handle the arguments passed into the program
-sourceCode * handleInput(int argc, const char * argv[], sourceCode * code, const char * outputFileName[]) {
+sourceCode * handleInput(int argc, const char * argv[], sourceCode * code, const char * outputFileName[], int * s, int * c, int * t, int * p) {
 
 	const char * inputFile, * outputFile;
+	int i, source = 0, clean = 0, printTokens = 0, pm0 = 0;
 
-	inputFile = argv[1];
-	outputFile = argv[2];
+	for (i = 1; i < argc; i++)
+		if (strcmp(argv[i], "--source") == 0)
+			source = 1;
+		else if (strcmp(argv[i], "--clean") == 0)
+			clean = 1;
+		else if (strcmp(argv[i], "--tokens") == 0)
+			printTokens = 1;
+		else if (strcmp(argv[i], "--pm0") == 0)
+			pm0 = 1;
+		else {
+			inputFile = argv[i];
+			i++;
+			if (i >= argc) {
+				printf("Invalid Arguments. Usage: ./compile (arguments) (inputfile) (outputfile)\n");
+				exit(1);
+			}
+			outputFile = argv[i];
+		}
+
+	*s = source;
+	*c = clean;
+	*t = printTokens;
+	*p = pm0;
 
 	*outputFileName = outputFile;
 

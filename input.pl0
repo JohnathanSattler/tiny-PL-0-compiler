@@ -1,7 +1,10 @@
-var a, b;
+const a = 10;
+var x;
 begin
-  a := 88;
-  b := 99;
-  write a;
-  write b
+  x := 0;
+  while x < a do begin
+  	write x;
+	x := x + 1;
+  end;
+  write x;
 end .
