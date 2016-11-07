@@ -26,3 +26,4 @@ void error(int num);
 void eat(int id);
 void emit(int op, int l, int m);
 int symbolExists(char * name);
+void addSymbol(int kind, char * name, int val, int level, int addr);

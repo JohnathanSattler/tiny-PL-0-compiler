@@ -1,3 +1,4 @@
+const a = 12, b = 54, c = 234;
 var x, y;
 begin
 	if x = 0 then

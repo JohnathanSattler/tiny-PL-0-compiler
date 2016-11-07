@@ -16,6 +16,7 @@ tok * tokenList;
 int token;
 int numError;
 int cx = 0;
+int numSym = 0;
 
 int program(tok * allTokens) {
 
@@ -51,18 +52,21 @@ void block() {
 
 void constDeclaration() {
 
-	if (token == constsym) {
-		advance();
-		eat(identsym);
-		eat(eqlsym);
-		eat(numbersym);
+	char * name;
+	int val;
 
-		while (token == commasym) {
+	if (token == constsym) {
+		do {
+			name = tokenList -> str;
 			advance();
 			eat(identsym);
+			val = tokenList -> number;
 			eat(eqlsym);
 			eat(numbersym);
-		}
+
+			addSymbol(1, name, val, 0, cx);
+			emit(LIT, 0, val);
+		} while (token == commasym);
 
 		eat(semicolonsym);
 	}
@@ -70,14 +74,17 @@ void constDeclaration() {
 
 void varDeclaration() {
 
-	if (token == varsym) {
-		advance();
-		eat(identsym);
+	char * name;
 
-		while (token == commasym) {
+	if (token == varsym) {
+		do {
+			name = tokenList -> str;
 			advance();
 			eat(identsym);
-		}
+
+			addSymbol(2, name, 0, 0, cx);
+			emit(LIT, 0, 0);
+		} while (token == commasym);
 
 		eat(semicolonsym);
 	}
@@ -235,6 +242,10 @@ void error(int num) {
 	printf("Error(%d): ", num);
 
 	switch (num) {
+		case -4:
+			printf("too many symbols");
+			break;
+
 		case -3:
 			printf("code too long");
 			break;
@@ -390,9 +401,23 @@ int symbolExists(char * name) {
 
 	int i;
 
-	for (i = 0; i < MAX_SYMBOL_TABLE_SIZE; i++)
+	for (i = 0; i < numSym; i++)
 		if (strcmp(symbolTable[i].name, name) == 0)
 			return i;
 
 	return -1;
+}
+
+void addSymbol(int kind, char * name, int val, int level, int addr) {
+
+	if (numSym > MAX_SYMBOL_TABLE_SIZE) {
+		error(-4);
+	} else {
+		symbolTable[numSym].kind = kind;
+		strcpy(symbolTable[numSym].name, name);
+		symbolTable[numSym].val = val;
+		symbolTable[numSym].level = level;
+		symbolTable[numSym].addr = addr;
+		numSym++;
+	}
 }
