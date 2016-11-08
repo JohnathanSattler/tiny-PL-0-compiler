@@ -353,6 +353,7 @@ void advance() {
 	tokenList = tokenList -> next;
 }
 
+//Error messages for Tiny PL0/Parser, prints and stops compilation process if encountered
 void error(int num) {
 
 	numError++;
@@ -442,6 +443,7 @@ void error(int num) {
 	exit(1);
 }
 
+//checks for errors. If an error, error function is called.
 void eat(int id) {
 
 	if (token != id)
