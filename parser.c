@@ -62,35 +62,21 @@ void constDeclaration() {
 
 	char * name;
 	int val;
-	tok * temp;
-	int omit = 0;
 
 	if (token == constsym) {
 		do {
-			temp = tokenList;
-
 			advance();
 
-			if (token == identsym)
-				name = temp -> str;
-			else
-				omit = 1;
+			name = identName;
 
 			eat(identsym);
-
-			temp = tokenList;
-
 			eat(eqlsym);
 
-			if (token == numbersym)
-				val = temp -> number;
-			else
-				omit = 1;
+			val = identVal;
 
 			eat(numbersym);
 
-			if (!omit)
-				addSymbol(1, name, val, 0, val);
+			addSymbol(1, name, val, 0, val);
 		} while (token == commasym);
 
 		eat(semicolonsym);
@@ -100,26 +86,17 @@ void constDeclaration() {
 void varDeclaration() {
 
 	char * name;
-	tok * temp;
-	int omit = 0;
 
 	if (token == varsym) {
 		do {
-			temp = tokenList;
-
 			advance();
 
-			if (token == identsym)
-				name = temp -> str;
-			else
-				omit = 1;
+			name = identName;
 
 			eat(identsym);
 
-			if (!omit) {
-				addSymbol(2, name, 0, 0, 4 + numVar);
-				numVar++;
-			}
+			addSymbol(2, name, 0, 0, 4 + numVar);
+			numVar++;
 		} while (token == commasym);
 
 		eat(semicolonsym);
@@ -153,13 +130,10 @@ void statement() {
 		else
 			error(-6);
 	} else if (token == beginsym) {
-		advance();
-		statement();
-
-		while (token == semicolonsym) {
+		do {
 			advance();
 			statement();
-		}
+		} while (token == semicolonsym);
 
 		eat(endsym);
 	} else if (token == ifsym) {

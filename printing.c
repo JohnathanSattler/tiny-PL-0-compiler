@@ -125,7 +125,13 @@ int printToksErrors(tok * toks) {
 				printf("\n");
 
 			numError++;
-			printf("Error: %s\n", current -> msg);
+			printf("Lex Error: %s (", current -> msg);
+
+			if (current -> id == numbersym) {
+				printf("%d)\n", current -> number);
+			} else {
+				printf("%s)\n", current -> str);
+			}
 		}
 
 		current = current->next;
