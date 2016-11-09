@@ -11,10 +11,13 @@
 // handle the arguments passed into the program
 sourceCode * handleInput(int argc, const char * argv[], sourceCode * code, const char * outputFileName[], int * s, int * c, int * t, int * p) {
 
+	// varaible declarations
 	const char * inputFile, * outputFile;
 	int i, source = 0, clean = 0, printTokens = 0, pm0 = 0;
 
+	// identify the arguments in argv. aborts the program if the command line format is incorrect
 	for (i = 1; i < argc; i++)
+		// compares the argument in argv[i] to the valid arguments. sets them to 1 if present
 		if (strcmp(argv[i], "--source") == 0)
 			source = 1;
 		else if (strcmp(argv[i], "--clean") == 0)
@@ -23,6 +26,8 @@ sourceCode * handleInput(int argc, const char * argv[], sourceCode * code, const
 			printTokens = 1;
 		else if (strcmp(argv[i], "--pm0") == 0)
 			pm0 = 1;
+	
+		// if arguments don't match, check for invalidity
 		else {
 			inputFile = argv[i];
 			i++;
@@ -33,21 +38,26 @@ sourceCode * handleInput(int argc, const char * argv[], sourceCode * code, const
 			outputFile = argv[i];
 		}
 
+	// update the pointers in the function input with values obtained in the above for loop
 	*s = source;
 	*c = clean;
 	*t = printTokens;
 	*p = pm0;
 
+	// assign output file to following char array
 	*outputFileName = outputFile;
 
+	// scans the input from the input file and copies it into a char array for parsing
 	code = readFile(inputFile, code);
 
+	// return the char array with the input to be parsed later
 	return code;
 }
 
 // read the input file
 sourceCode * readFile(const char * fileName, sourceCode * code) {
 
+	// variable declarations
 	FILE * ifp;
 	char temp;
 	sourceCode * last = code;
@@ -61,11 +71,14 @@ sourceCode * readFile(const char * fileName, sourceCode * code) {
 		exit(0);
 	}
 
+	// trace through the file, continue to grab inputs and add to code until the end of file
 	while(fscanf(ifp, "%c", &temp) != EOF) {
+		// allocate space for a new current source code object
 		sourceCode * current = (sourceCode *) malloc(sizeof(sourceCode));
 		current -> c = temp;
 		current -> next = NULL;
 
+		// fix pointers
 		if (last == NULL) {
 			last = current;
 			code = last;
