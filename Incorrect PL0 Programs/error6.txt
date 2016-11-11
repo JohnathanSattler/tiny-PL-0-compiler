@@ -1,0 +1,2 @@
+
+Lex Error: Invalid token (^)

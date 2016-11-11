@@ -26,6 +26,6 @@ Examples:
 
 Compiler: `./compile input.pl0 output.pm0`
 
-Compiler: `./compile --source --clean --tokens --pm0 input.pl0 output.pm0`
+Compiler with arguments: `./compile --source --clean --tokens --pm0 input.pl0 output.pm0`
 
 Virtual Machine: `./vm output.pm0`

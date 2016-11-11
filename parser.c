@@ -340,7 +340,7 @@ void error(int num) {
 			break;
 
 		case -5:
-			printf("Undeclared identifier");
+			printf("Undeclared identifier (%s)", identName);
 			break;
 
 		case -4:

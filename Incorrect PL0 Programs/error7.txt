@@ -1,0 +1,2 @@
+
+Error(-2): the preceding factor cannot begin with this symbol.
