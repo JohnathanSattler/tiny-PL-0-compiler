@@ -3,8 +3,8 @@ var x;
 begin
   x := 0;
   while x < a do begin
-  	write x;
+  	if odd x then
+  		write x;
 	x := x + 1;
   end;
-  write x;
 end .

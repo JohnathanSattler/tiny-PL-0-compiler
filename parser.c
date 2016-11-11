@@ -198,6 +198,8 @@ void condition() {
 	if (token == oddsym) {
 		advance();
 		expression();
+
+		emit(OPR, 0, OPR_ODD);
 	} else {
 		expression();
 		relOp();
