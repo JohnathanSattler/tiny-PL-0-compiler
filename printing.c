@@ -113,6 +113,7 @@ void printToks(tok * toks) {
 	
 }
 
+// print only the errors for the lexer
 int printToksErrors(tok * toks) {
 	
 	tok * current = toks;
@@ -141,6 +142,7 @@ int printToksErrors(tok * toks) {
 	
 }
 
+// print PM/0 code
 void printAssembly(instruction code[], int size) {
 
 	int i;

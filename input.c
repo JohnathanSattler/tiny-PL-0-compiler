@@ -94,17 +94,21 @@ sourceCode * readFile(const char * fileName, sourceCode * code) {
 	return code;
 }
 
+// write PM/0 to an output file
 void writeFile(const char * fileName, instruction * code, int size) {
 
 	FILE * ofp;
 	int i;
 
+	// open or create the file
 	ofp = fopen(fileName, "w");
 
+	// write the code
 	for (i = 0; i < size; i++) {
 		fprintf(ofp, "%d %d %d\n", code[i].op, code[i].l, code[i].m);
 	}
 
+	// close the file
 	fclose(ofp);
 
 	return;

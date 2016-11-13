@@ -22,6 +22,7 @@ int identVal;
 int relOpCode;
 int numVar = 0;
 
+// execute the program
 int program(tok * allTokens, const char * outputFileName, int pm0) {
 
 	int i;
@@ -34,8 +35,10 @@ int program(tok * allTokens, const char * outputFileName, int pm0) {
 	block();
 	eat(periodsym);
 
+	// halt the program
 	emit(SIO, 0, SIO_HLT);
 
+	// print out PM/0 code if requested, and write the output file
 	if (numError == 0) {
 		if (pm0) {
 			printAssembly(code, cx);
@@ -48,6 +51,7 @@ int program(tok * allTokens, const char * outputFileName, int pm0) {
 	return numError;
 }
 
+// run a block of the program
 void block() {
 
 	constDeclaration();
@@ -58,6 +62,7 @@ void block() {
 	statement();
 }
 
+// define constants
 void constDeclaration() {
 
 	char * name;
@@ -83,6 +88,7 @@ void constDeclaration() {
 	}
 }
 
+// define variables
 void varDeclaration() {
 
 	char * name;
@@ -103,6 +109,7 @@ void varDeclaration() {
 	}
 }
 
+// looks for a statement
 void statement() {
 
 	int cx1;
@@ -112,10 +119,12 @@ void statement() {
 	int i;
 	int m;
 
+	// look for an identsym
 	if (token == identsym) {
 		name = identName;
 		i = symbolExists(name);
 
+		// if the identifier isn't defined, return an error
 		if (i < 0)
 			error(-5);
 		else
@@ -125,18 +134,23 @@ void statement() {
 		eat(becomessym);
 		expression();
 
+		// if the identifier isn't a variable, return an error
 		if (symbolTable[i].kind == 2)
 			emit(STO, 0, m);
 		else
 			error(-6);
-	} else if (token == beginsym) {
+	}
+	// look for a beginsym
+	else if (token == beginsym) {
 		do {
 			advance();
 			statement();
 		} while (token == semicolonsym);
 
 		eat(endsym);
-	} else if (token == ifsym) {
+	}
+	// look for an ifsym
+	else if (token == ifsym) {
 		advance();
 		condition();
 		eat(thensym);
@@ -145,7 +159,9 @@ void statement() {
 		emit(JPC, 0, 0);
 		statement();
 		code[cx1].m = cx;
-	} else if (token == whilesym) {
+	}
+	// look for a whilesym
+	else if (token == whilesym) {
 		cx1 = cx;
 		advance();
 		condition();
@@ -156,12 +172,15 @@ void statement() {
 		statement();
 		emit(JMP, 0, cx1);
 		code[cx2].m = cx;
-	} else if (token == readsym) {
+	}
+	// look for a readsym
+	else if (token == readsym) {
 		advance();
 
 		name = identName;
 		i = symbolExists(name);
 
+		// if the identifier isn't defined, return an error
 		if (i < 0)
 			error(-5);
 		else
@@ -171,12 +190,15 @@ void statement() {
 
 		emit(SIO, 0, SIO_INP);
 		emit(STO, 0, m);
-	} else if (token == writesym) {
+	}
+	// look for a writesym
+	else if (token == writesym) {
 		advance();
 
 		name = identName;
 		i = symbolExists(name);
 
+		// if the identifier isn't defined, return an error
 		if (i < 0)
 			error(-5);
 		else
@@ -193,8 +215,10 @@ void statement() {
 	}
 }
 
+// look for a condition
 void condition() {
 
+	// determine if the condition begins with an oddsym
 	if (token == oddsym) {
 		advance();
 		expression();
@@ -209,8 +233,11 @@ void condition() {
 	}
 }
 
+// look for a relop
 void relOp() {
 
+	// determines which operator is being used,
+	// if an unknown one is used, return an error
 	if (token == eqlsym)
 		relOpCode = OPR_EQL;
 	else if (token == neqsym)
@@ -229,10 +256,12 @@ void relOp() {
 	advance();
 }
 
+// look for an expression
 void expression() {
 
 	int addop;
 
+	// check if the expression begins with a plussym or minussym
 	if (token == plussym || token == minussym) {
 		addop = token;
 
@@ -245,6 +274,7 @@ void expression() {
 		term();
 	}
 
+	// loop for every plussym or minussym
 	while (token == plussym || token == minussym) {
 		addop = token;
 
@@ -258,12 +288,14 @@ void expression() {
 	}
 }
 
+// look for a term
 void term() {
 
 	int mulop;
 
 	factor();
 
+	// loop for every multsym and slashsym
 	while (token == multsym || token == slashsym) {
 		mulop = token;
 
@@ -277,15 +309,18 @@ void term() {
 	}
 }
 
+// look for a factor
 void factor() {
 
 	char * name;
 	int i, m;
 
+	// check for an identsym
 	if (token == identsym) {
 		name = identName;
 		i = symbolExists(name);
 
+		// if the identifier isn't defined, return an error
 		if (i < 0)
 			error(-5);
 		else
@@ -297,21 +332,28 @@ void factor() {
 			emit(LIT, 0, m);
 		else
 			emit(LOD, 0, m);
-	} else if (token == numbersym) {
+	}
+	// look for a number
+	else if (token == numbersym) {
 		m = identVal;
 
 		advance();
 
 		emit(LIT, 0, m);
-	} else if (token == lparentsym) {
+	}
+	// look for an lparentsym
+	else if (token == lparentsym) {
 		advance();
 		expression();
 		eat(rparentsym);
-	} else {
+	}
+	// if unkown symbol encountered, return an error
+	else {
 		error(-2);
 	}
 }
 
+// move to the next token
 void advance() {
 
 	if (tokenList == NULL) {
@@ -329,7 +371,7 @@ void advance() {
 	tokenList = tokenList -> next;
 }
 
-//Error messages for Tiny PL0/Parser, prints and stops compilation process if encountered
+// Error messages for Tiny PL0/Parser, prints and stops compilation process if encountered
 void error(int num) {
 
 	numError++;
@@ -419,7 +461,7 @@ void error(int num) {
 	exit(1);
 }
 
-//checks for errors. If an error, error function is called.
+// checks for a token. If token isn't found, error function is called.
 void eat(int id) {
 
 	if (token != id)
@@ -428,6 +470,7 @@ void eat(int id) {
 	advance();
 }
 
+// create a line of PM/0 code
 void emit(int op, int l, int m) {
 
 	if (cx > MAX_CODE_LENGTH) {
@@ -440,6 +483,7 @@ void emit(int op, int l, int m) {
 	}
 }
 
+// check if a symbol is defined
 int symbolExists(char * name) {
 
 	int i;
@@ -451,6 +495,7 @@ int symbolExists(char * name) {
 	return -1;
 }
 
+// add a symbol to the symbol table
 void addSymbol(int kind, char * name, int val, int level, int addr) {
 
 	if (numSym > MAX_SYMBOL_TABLE_SIZE) {
